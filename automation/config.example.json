@@ -1,0 +1,16 @@
+{
+  "spaceName": null,
+  "resumeReport": null,
+  "rootFolder": "Competitor Research",
+  "country": "Malaysia",
+  "industry": "Tool",
+  "brands": [],
+  "platforms": [
+    { "name": "Facebook", "folder": "FB" },
+    { "name": "AdMob", "folder": "GG" }
+  ],
+  "topCount": 2,
+  "newCount": 3,
+  "maxCandidates": 35,
+  "maxRunMs": 900000
+}

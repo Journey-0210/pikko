@@ -1,0 +1,25 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+const content=fs.readFileSync(new URL('../content.js',import.meta.url),'utf8');
+const load=content.slice(content.indexOf('  async function loadState('),content.indexOf('  function renderFolders('));
+const select=content.slice(content.indexOf('  function selectFolder('),content.indexOf('  function folderFullPath('));
+test('picker collapses folders, defaults to last destination and stages single-click selection without rebuilding its target',async()=>{
+  let saved=[],errors=[],renders=0;
+  const folders=[{id:'root',name:'Brand'},{id:'month',name:'2026-10',parentId:'root'},{id:'fb',name:'FB',parentId:'month'}];
+  let state={folders,assets:[],settings:{lastFolderId:'fb'}};
+  const scope=vm.createContext({Set,Array,Error,message:async()=>state,renderFolders(){renders++;},updateSaveDestination(){},setError(v,error){errors.push(error);},chooseFolder(v,folder){saved.push(folder.id);}});
+  vm.runInContext(load+select+'\nglobalThis.api={loadState,selectFolder,saveSelection};',scope);
+  const view=()=>({initializedFolders:new Set(),collapsed:new Set(),selectionInitialized:false,search:{focus(){}},folderList:{replaceChildren(){},querySelectorAll(){return [];}}});
+  const v=view();await scope.api.loadState(v);
+  assert.deepEqual([...v.collapsed],['root','month','fb']);assert.equal(v.selectedFolderId,'fb');
+  const beforeSelection=renders;
+  scope.api.selectFolder(v,folders[0]);assert.equal(v.selectedFolderId,'root');assert.deepEqual(saved,[]);assert.equal(renders,beforeSelection,'single click must not destroy the dblclick target');
+  await scope.api.loadState(v);assert.equal(v.selectedFolderId,'root');
+  scope.api.saveSelection(v);assert.deepEqual(saved,['root']);
+  const next=view();await scope.api.loadState(next);scope.api.saveSelection(next);assert.deepEqual(saved,['root','fb']);
+  state={...state,settings:{lastFolderId:'deleted'}};
+  const missing=view();await scope.api.loadState(missing);assert.equal(missing.selectedFolderId,null);scope.api.saveSelection(missing);assert.equal(saved.length,2);assert.equal(errors.at(-1),'请选择存放文件夹');
+  v.busy=true;scope.api.selectFolder(v,folders[2]);assert.equal(v.selectedFolderId,'root');
+});

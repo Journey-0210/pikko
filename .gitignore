@@ -1,0 +1,22 @@
+# Each user's environment, competitors, library and execution evidence stay local.
+automation/config.json
+automation/machine.json
+automation/session.json
+automation/run.lock
+automation/stop-requested
+automation/last-run.json
+automation/last-result.txt
+automation/creative-families.json
+automation/*cache*
+automation/runs/
+dist/
+deliverables/
+qa/
+backups/
+AdVault/
+node_modules/
+.env
+.env.*
+*.log
+.DS_Store
+Thumbs.db

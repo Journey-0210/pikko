@@ -1,0 +1,114 @@
+# Agent 操作手册
+
+## 交付目标与边界
+
+把当前目录的插件和脚本配置为用户自己的竞品调查工具。不要把本项目当成必须重新开发的软件；通常只需安装检查、业务配置、真实试跑和结果核验。插件可以单独手动使用；固定采集器当前只支持 BigSpy Facebook / AdMob，使用英文界面控件。
+
+先读README、TEAM_GUIDE和RELEASE_NOTES。国家、行业、竞品归属不是从开发者历史默认继承的事实。优先使用用户已给信息，只问缺少且无法从已授权页面核实的信息。
+
+## 第一步：离线环境检查
+
+从实际文件位置确定项目根目录，不写固定用户路径。检查 `node --version`、`ego-browser --version` 和 `ffmpeg -version`；FFmpeg不在PATH时寻找已安装的可执行文件并配置绝对路径。运行时不依赖Python、npm包、历史QA目录或模型API。
+
+安装或修复缺失工具前检查现有环境，按工具官方指引处理。使用浏览器时先运行 `ego-browser skill`，读取完整指引并遵守工作区、用户接管与结束规则。能力缺失应报告环境阻塞，不能拿联网搜索结果代替真实页面核验。
+
+在ego实际浏览器加载 `extension/`，观察扩展页面上的真实ID。不要为统一ID而伪造manifest key；不要卸载已安装扩展或清空数据。若已有pikko，核对加载目录与版本；更新必须保留原目录并先备份。浏览器权限/文件选择框由用户处理。
+
+执行 `node automation/setup.mjs --extension-id <actual-id> [--ffmpeg <actual-executable>]`。它只创建缺失的machine/config文件。已有machine不覆盖；确需修改先备份并说明原因。
+
+## 第二步：核对竞品与页面
+
+让用户正常登录BigSpy，使用英文Ad Library界面；检查官方Download是否实际可用，不能仅凭套餐文字推断。打开pikko库，确认没有pending；已有数据做基线快照，不写入共享包。
+
+核对竞品官网/应用、BigSpy广告主、投放账号和搜索字段。使用当前可见、授权页面来确定brand.match、accountMatch；广告文案中提到品牌不等于广告归属。代理/经销商/同名品牌应先待核实。reviewedAds只允许加入用户或实际证据明确核实的广告ID，不能把所有跳过项加入白名单。
+
+同一App可能由不同名称的账号投放。用户确认或实际核实目标App一致时，可以为已核对的具体广告填写reviewedAds，并保留App/品牌名、国家、平台和日期检查；不要仅因账号名不同永久排除，也不要因此把该账号所有品牌无条件放行。区分BigSpy可见App名称与实际商店链接，未逐条打开跳转链接时如实记录核对范围。
+
+确认国家在BigSpy的实际英文标签和行业选项。当前配置一次选择一个国家；本版不提供多国合并查询或任意平台适配。industry为null时，Reset后不追加行业选择；为字符串时必须是当前页面实际可选标签。发现控件与教程不符时先诊断，不能盲猜坐标。
+
+配置示例（仅示范已核实过的品牌规则，不代表用户想调查这个品牌）：
+
+```json
+{
+  "spaceName": null,
+  "resumeReport": null,
+  "rootFolder": "My Competitor Research Pilot",
+  "country": "Malaysia",
+  "industry": "Tool",
+  "brands": [{
+    "folder": "Tambadana",
+    "query": "Tambadana",
+    "match": ["Tambadana"],
+    "accountMatch": ["Wawasan Cojaya"]
+  }],
+  "platforms": [
+    {"name": "Facebook", "folder": "FB"},
+    {"name": "AdMob", "folder": "GG"}
+  ],
+  "topCount": 2,
+  "newCount": 3,
+  "maxCandidates": 35,
+  "maxRunMs": 900000
+}
+```
+
+| 字段 | 配置含义 |
+|---|---|
+| machine.extensionId | 当前浏览器真实32位ID，字母a至p |
+| machine.ffmpegPath | FFmpeg可执行文件路径，或PATH中的ffmpeg；不是所在文件夹 |
+| rootFolder | 输出调查根目录；首次试跑独立命名，日常复跑保持同目录 |
+| country | BigSpy单个国家/地区标签；省略时兼容旧配置Malaysia |
+| industry | 实际行业标签；省略兼容旧配置Tool，null不额外选择行业 |
+| brands[].folder | 目录名，配置内唯一 |
+| query | 实际搜索内容；多关键词按站点实际语法核对，不自动拼同义词 |
+| searchField | 省略为Ad Info；只有实际核对后可用Advertiser |
+| match | 非空的已核实广告主/账号名称，用于归属匹配 |
+| accountMatch | 可选，已核实的投放账号/主体名称；不是放宽归属的通配符 |
+| modes | 可选的top/new数组；不填两项都执行 |
+| topCount/newCount | 每平台目标数量，品牌可单独覆盖；数量不足如实报告 |
+| maxCandidates | 每条筛选路径候选预算，不是全站覆盖承诺 |
+| maxRunMs | 本次整轮时间预算；单品牌标准试跑建议1800000（30分钟），多品牌需按范围设置合理预算并报告实际耗时 |
+| dateRange | 可选start/end，YYYY-MM-DD；不填读取站点Last 30 Days实际起止日期 |
+| spaceName | 常规null，不复制别人TaskSpace。调试才使用本轮新建且仍有效的工作区名称 |
+| resumeReport | 常规null；恢复时指定已核对的原始报告绝对路径 |
+
+行业/国家的配置与筛选校验已做通用化，但除版本说明列出的市场之外，必须实测后才可宣称该范围通过。不要把字段存在理解为所有国家、分类都已验收。
+
+## 第三步：先试跑，再交付日常配置
+
+1. 保存用户配置原文与代码版本/哈希。临时试跑优先用单独复制的工作区或备份配置，不覆盖别人正在编辑的文件。`PIKKO_CONFIG_PATH`可选择相对于项目根或绝对的配置文件；本地启动器继承该环境变量。证据仍保存在该项目的automation目录，运行锁也是该项目级别。
+2. 运行 `node automation/doctor.mjs`。检查全过后再执行浏览器检查；doctor不会主动导航、登录或下载。
+3. 保存本机库的真实before基线及已有缺失文件。首轮一个竞品，2+3、maxCandidates35、15分钟。插件先具备图片和视频真实保存/预览证据；若候选没有一种类型，不冒称两种已验证，可用明确历史样本作为单独回归，不能充当最新发现。
+4. Windows从项目根执行 `cmd /c automation\Start-BigSpy.cmd --no-pause`；其他系统候选入口 `node automation/launch.mjs`。实际.cmd和底层脚本都必须保留失败退出码。
+5. 读取本轮准确 `last-run.json`，核对新时间/目录。命令失败但没有新报告时就是启动失败，不引用上一轮成功。正常结束后运行 `node automation/verify.mjs "本轮目录绝对路径"`。
+6. 分开判断：程序/异常处理、真实文件与数据、业务数量/覆盖。正常verify包括原记录保护、真实原文件完整解码、来源ID、日期、评分、目标目录和来源说明。`--allow-incomplete`只检查已保存部分，必须标明，不能当整轮完成。
+7. 核对试跑新增重复数、旧数据保护、pending和配置恢复。保留首次失败截图、events、report及原始before/after。
+8. 试跑通过后整理日常5+10、maxCandidates90配置，告诉用户开始/停止及结果位置。仅获准试跑时不要自行扩大到全竞品正式采集。日常root保持稳定；明确调查范围变化时新建根目录并禁用旧检查点。
+
+默认文件层级“根/竞品/月/平台”，最多六级目录约束仍适用。月度长投放可跨月保存，最新按历史广告ID/明确家族排除。同目录结果存在时复用；缺文件会失败，不靠元数据伪装成功。复用旧记录保留原始快照，不能称指标已更新。
+
+## 第四步：停止、恢复和失败
+
+Stop请求在下一个安全检查点收尾；不会强杀活跃下载。停止轮记录COLLECTION_STOP，并检查pending。恢复时保持根目录、日期、数量、国家、行业、竞品与搜索口径一致，指向原报告；部分/不匹配检查点被拒绝后重新搜索并复用成功文件。不要修改旧报告来骗过匹配，国家或行业变化的检查点不能复用。
+
+页面等待超时：脚本仅在无pending时自动刷新一次，保留首次失败；重试仍失败就停止诊断。COUNT EXHAUSTED停止整轮，不猜总额度和恢复时间。连续3次未知下载失败、10分钟无有效进展或运行预算到期会安全停止；单次当前操作收尾用时单列。源站200但没有真实文件不能标成功。
+
+诊断顺序：准确runId → errorCode/attempts → 原始events的arm/official.response/download.created/download.match/changed → pending和实际文件 → 来源页面/截图。下载菜单变化、登录失效、官方下载拒绝、无事件、类型/来源不匹配与完整解码失败分别报告。不要直接延长全部超时，也不要关闭来源匹配或历史去重。
+
+升级/修复先保存新候选代码哈希，跑相关和完整本地回归，再验证受影响真实链路。测试命令：
+
+```powershell
+node --test --test-concurrency=1 automation/tests/*.test.mjs extension/tests/*.test.js
+```
+
+FFmpeg用于真实解码fixture，缺失必须先配置，不能跳过后称全通过。已有本地测试包括完整模拟拒绝链路、无下载事件、菜单延迟、停止/恢复、互斥、排序、截断文件拒绝和迁移路径。测试通过不等于真实账号所有异常已覆盖。
+
+陈旧锁：先查看锁内PID、当前进程和last-run，确认没有活跃捕获或pending，才讨论清理；不要无条件unlink。不同项目副本/电脑的锁互不协调，同一浏览器/账号并行仍需避免。
+
+## 第五步：交付给使用者
+
+用简短中文报告：环境与当前版本、用户竞品/国家/平台/日期、实际runId、保存/目标/复用/新文件、文件验收、缺量原因、重试和人工操作、旧数据/pending、配置位置与下次指令。明确PASS、FAIL、BLOCKED、NOT RUN；没有发生的真实403、崩溃、其他国家适配不能写通过。
+
+本机配置与库含个人路径和研究资料，默认保留在本机。不把cookie、认证头、签名媒体URL、浏览器profile或整库导出写进共享安装包。需要向维护者提供日志时，先选取本轮必要的脱敏信息。
+
+打包用 `node release/build.mjs`。它只复制白名单运行文件、测试和教程，生成文件SHA256清单，不包含本机配置、缓存和历史证据。修改安装包后重新运行构建和包内容核对，不能直接zip整个开发目录。

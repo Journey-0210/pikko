@@ -1,0 +1,11 @@
+/* All interface styles live inside the shadow root in content.js. This rule only isolates its host. */
+#ad-vault-v2-capture-root {
+  all: initial !important;
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 2147483646 !important;
+  pointer-events: none !important;
+  color-scheme: light !important;
+}

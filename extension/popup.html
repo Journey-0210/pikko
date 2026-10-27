@@ -1,0 +1,7 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="color-scheme" content="light"><title>pikko.</title><link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png"><link rel="icon" type="image/png" sizes="16x16" href="assets/icon-16.png"><link rel="stylesheet" href="popup.css"><script type="module" src="popup.js"></script></head>
+<body><header class="brand"><span class="brand-logo" aria-hidden="true"></span><span>pikko.</span></header>
+<main class="folder-paper"><h1>资料库</h1><label class="capture-switch"><span>网页收藏</span><input id="capture-enabled" type="checkbox" role="switch" aria-label="网页收藏" disabled></label><button id="library" class="primary">打开资料库 <span>↗</span></button>
+<div class="action-row"><button id="new-folder" class="new-folder" aria-expanded="false" aria-controls="create-form">＋ 新建文件夹</button><details class="more-menu" hidden><summary aria-label="更多操作" title="更多操作">···</summary><div><button id="cancel" hidden>取消等待中的接收</button></div></details></div>
+<form id="create-form" hidden><select id="parent-folder" aria-label="存放位置"><option value="">资料库顶层</option></select><div class="name-row"><input id="folder-name" placeholder="文件夹名称" aria-label="文件夹名称" maxlength="100" required autocomplete="off"><button id="create-folder" type="submit" class="create-button">创建</button></div></form>
+<div id="status" role="status" aria-live="polite" hidden></div><div class="paper-spine" aria-hidden="true"></div></main></body></html>
