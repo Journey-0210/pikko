@@ -6,7 +6,7 @@
 
 **公司同事下载：** 登录有权限的 GitHub 账号，进入 [最新内部试用版](https://github.com/Journey-0210/pikko/releases/latest)，下载其中的 `pikko-team` ZIP 并完整解压；也可从仓库首页 Code → Download ZIP 下载源码。私有仓库需要先由仓库管理员授予访问权限。
 
-**同事第一次用：** 完整解压到固定目录，在自己的 AI agent 中打开这个目录，把 [AGENT_START.txt](AGENT_START.txt) 整段发给它，再告诉它竞品名称、官网和调查市场。Agent 会检查环境、引导安装插件、核对竞品并先跑小批次。
+**同事第一次用：** 完整解压到固定目录，双击 **开始使用.cmd**（或Start-Here.cmd），回答竞品、国家和官网/App链接。装有Codex命令行时，向导会自动启动AI继续配置；没有时，在自己的AI agent中打开这个目录，只说“开始”即可，无需复制说明文件。Agent会主动引导安装、登录和小批次；Node.js未安装时入口会显示安装地址，安装后重新双击。
 
 **已经配置好：** Windows 双击 `automation/Start-BigSpy.cmd`；停止用 `Stop-BigSpy.cmd`。结果摘要在 `automation/last-result.txt`，完整证据由 `last-run.json` 指向。其他系统的命令入口为 `node automation/launch.mjs`，但目前实机验证范围是 Windows，其他系统需另做首次试跑。
 

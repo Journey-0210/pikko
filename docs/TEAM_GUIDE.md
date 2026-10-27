@@ -11,10 +11,12 @@ AI agent 负责配置与核对，日常固定步骤由脚本执行。这个包�
 ## 2. 最容易开始的方法
 
 1. 完整解压 ZIP 到固定目录，路径可以有中文和空格。不要在 ZIP 预览内运行，也不要只拿走 Start 文件。
-2. 在你使用的 AI agent 中打开解压目录。Agent 需要能读写本机文件、运行命令，并能使用 ego-browser。
-3. 复制根目录 `AGENT_START.txt` 给 agent，填竞品、官网/应用链接、调查国家。不了解技术参数可以先用默认数量。
+2. 双击根目录 **开始使用.cmd**（或Start-Here.cmd），回答竞品、调查国家和官网/App链接。没有Node.js时按显示的地址安装，再重新双击。
+3. 已安装Codex命令行时会自动启动AI继续配置，使用你自己的AI账号及权限设置；只有桌面App不代表一定有命令行。没有命令行或使用其他agent时，在agent中打开此文件夹，只说“开始”，无需复制AGENT_START.txt。Agent需要能读写本机文件、运行命令，并使用ego-browser。
 4. 按 agent 引导完成本人登录、浏览器安装确认和本地目录选择。
 5. 等首次小批次验收结果。成功后 agent 会留下你的日常配置和下一次运行方式。
+
+向导只保存你的调查需求，不把未经核实的竞品直接写入正式采集配置，也不会覆盖已有machine/config或素材。再次双击会沿用上次需求继续；要换竞品，在agent里直接说明新需求即可。首次界面为中文问答窗口，不是完整图形安装程序；下载ZIP本身不会自动执行。自动启动参数依据[官方Codex CLI文档](https://learn.chatgpt.com/docs/cli/reference)，项目引导依据[AGENTS.md机制](https://learn.chatgpt.com/docs/agent-configuration/agents-md)。
 
 没有 ego-browser 能力的普通聊天窗口可以解释教程，但不能替你完成本机浏览器采集。此时需要在有本地文件、终端和 ego-browser 能力的 agent 中继续。
 

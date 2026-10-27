@@ -1,6 +1,7 @@
 # Each user's environment, competitors, library and execution evidence stay local.
 automation/config.json
 automation/machine.json
+automation/onboarding-request.json
 automation/session.json
 automation/run.lock
 automation/stop-requested
