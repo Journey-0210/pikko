@@ -8,7 +8,7 @@ const buildId='pikko-team-'+new Date().toISOString().replace(/[:.]/g,'-');
 const target=`${ROOT}/dist/${buildId}/pikko-team`;await fs.mkdir(target,{recursive:true});
 const entries=[];
 async function copy(file,to=file){const data=await fs.readFile(ROOT+'/'+file);await fs.mkdir(path.dirname(target+'/'+to),{recursive:true});await fs.writeFile(target+'/'+to,data);entries.push({path:to,bytes:data.length,sha256:crypto.createHash('sha256').update(data).digest('hex')});}
-for(const file of ['.gitignore','README.md','AGENTS.md','AGENT_START.txt','Start-Here.cmd','开始使用.cmd','DELIVERY_VERIFICATION.md','docs/TEAM_GUIDE.md','docs/AGENT_PROMPTS.md','docs/AGENT_PLAYBOOK.md','docs/RELEASE_NOTES.md','docs/EXTENSION_README.md'])await copy(file);
+for(const file of ['.gitignore','README.md','AGENTS.md','AGENT_START.txt','Start-Here.cmd','开始使用.cmd','DELIVERY_VERIFICATION.md','TEST_PLAN_BIGSPY_AUTOMATION.md','docs/TEAM_GUIDE.md','docs/AGENT_PROMPTS.md','docs/AGENT_PLAYBOOK.md','docs/RELEASE_NOTES.md','docs/EXTENSION_README.md'])await copy(file);
 await copy('README.md','START_HERE.md');
 await copy('docs/EXTENSION_README.md','extension/README.md');
 for(const file of (await fs.readdir(ROOT+'/extension')).filter(f=>/\.(js|css|html)$/.test(f)||['manifest.json','package.json'].includes(f)))await copy('extension/'+file);
